@@ -1,6 +1,8 @@
+
+import os
 from dotenv import load_dotenv
 from google import genai
-import os
+from google.genai import types
 
 
 def main():
@@ -14,13 +16,30 @@ def main():
 
     client = genai.Client(api_key=api_key)
 
-    response = client.models.generate_content(
-        model="gemini-3.8-flash",
-        contents="Explain what an AI customer support agent does in 2 simple sentences."
+    chat = client.chats.create(
+        model="gemini-3.8-flash"
     )
 
-    print("Gemini's response:")
-    print(response.text)
+    print("Welcome to SupportPilot AI!")
+    print("Type 'exit' to quit.\n")
+
+    while True:
+        question = input("You: ").strip()
+
+        if question.lower() == "exit":
+            print("SupportPilot AI: Goodbye!")
+            break
+
+        if not question:
+            continue
+
+        try:
+            response = chat.send_message(question)
+            print("\nSupportPilot AI:", response.text, "\n")
+
+        except Exception as error:
+            print("Sorry, something went wrong.")
+            print("Error:", error)
 
 
 if __name__ == "__main__":
